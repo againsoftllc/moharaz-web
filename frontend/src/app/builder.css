@@ -1,0 +1,421 @@
+/* ===== PC BUILDER — shared chrome ===== */
+
+/* circuit-board texture behind the builder: transparent PNGs made from public/pc-builder-bg.jpg (lines tinted per theme).
+   The pattern is fixed to the window, so the builder scrolls over it; soft fade where the section starts and ends */
+.pcb-bg{background:linear-gradient(var(--bg),transparent 80px,transparent calc(100% - 120px),var(--bg)),url(/pc-builder-bg-dark.png) 0 0/304px 304px repeat fixed}
+[data-theme=light] .pcb-bg{background-image:linear-gradient(var(--bg),transparent 80px,transparent calc(100% - 120px),var(--bg)),url(/pc-builder-bg-light.png)}
+
+/* slot photos (SlotArt): HD transparent part shots, greyed until the slot has a part, lit when picked, active or hovered */
+.slot-art{display:grid;place-items:center;flex:none;border-radius:12px;background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--text) 8%,transparent),transparent 70%);transition:background .2s}
+.slot-art img{width:88%;height:88%;object-fit:contain;filter:grayscale(1) drop-shadow(0 4px 8px rgba(0,0,0,.3));opacity:.55;transition:filter .25s,opacity .25s,transform .25s}
+.slot-art svg{width:52%;height:52%;stroke-width:1.2;color:var(--dim);transition:color .2s}
+.has .slot-art img,.on .slot-art img,.pk-head:hover .slot-art img,.ov-slot:hover .slot-art img{filter:drop-shadow(0 6px 12px rgba(0,0,0,.4));opacity:1}
+.on .slot-art img,.pk-head:hover .slot-art img,.ov-slot:hover .slot-art img{transform:scale(1.06)}
+.has .slot-art,.on .slot-art{background:radial-gradient(circle at 50% 42%,var(--red-soft),transparent 70%)}
+.has .slot-art svg,.on .slot-art svg{color:var(--red)}
+.pk-head .slot-art{width:56px;height:56px}
+.ov-slot .slot-art{width:64px;height:64px}
+
+/* the builder runs to the bottom of the window: no site footer on this page (mobile bottom nav + contact button stay) */
+body:has(.pcb-bg)>footer{display:none}
+/* --z: the desktop zoom below (1 elsewhere); --hdr-h / --bar-h: site header and tab bar heights in screen px, measured by PcBuilder */
+.pcb-page{--z:1}
+/* the cart card owns the bottom-left corner here, so the minimised compare button sits bottom-right and the
+   support button sits above it — they must not overlap, or the
+   support button's (invisible) item stack swallows clicks meant for the compare button */
+body:has(.pcb-bg){--float-b:20px}
+body:has(.pcb-bg) .cmp-mini{left:auto;right:22px;bottom:var(--float-b)}
+/* large screens: the support button always sits one slot up, so it never jumps when the compare button comes and goes */
+body:has(.pcb-bg) .fab{bottom:calc(var(--float-b) + 52px + 12px)}
+/* the tab bar hangs from the site header: flush under it from the start and pinned there, so it never moves */
+.pcb-bar{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:6px;border-radius:0 0 var(--r-lg) var(--r-lg);background:var(--s-1);border:1px solid var(--line);border-top:0;margin-bottom:var(--s3);position:sticky;top:calc(var(--hdr-h,126px) / var(--z));z-index:30;box-shadow:0 10px 24px rgba(0,0,0,.28)}
+.pcb-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.pcb-tabs button{display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap}
+.pcb-tabs button svg{width:16px;height:16px}
+.pcb-tabs button span{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--s-3);font-size:11px;font-weight:800;display:grid;place-items:center;color:var(--text)}
+.pcb-tabs button:hover{color:var(--text);background:var(--s-2)}
+.pcb-tabs button.on{background:var(--s-2);color:var(--text)}
+.pcb-tabs button.on span{background:var(--red);color:#fff}
+.pcb-actions{display:flex;align-items:center;gap:4px}
+.pcb-actions-m{display:none}
+.pcb-actions .ib-l{display:none} /* the labels show in the phone row only */
+.pcb-actions .ib:disabled{opacity:.4;cursor:default}
+.watt{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:999px;background:var(--amber-soft);color:var(--amber);font-size:12px;font-weight:800;white-space:nowrap;margin-right:6px}
+.watt svg{width:14px;height:14px}.watt em{font-style:normal;font-weight:600;opacity:.85}
+
+.tt-save{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--amber)}
+.tt-save em{font-style:normal;padding:1px 6px;border-radius:4px;background:var(--amber);color:#111}
+
+/* ===== OVERVIEW ===== */
+.ov{display:grid;gap:var(--s3)}
+.ov-checks{background:var(--s-1);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--s4) var(--s5)}
+.ov-checks .side-h{margin-bottom:var(--s2)}
+.ov-checks ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:6px var(--s5)}
+.ov-checks li{display:flex;gap:8px;align-items:flex-start;font-size:13px;font-weight:600}
+.ov-checks li svg{width:16px;height:16px;margin-top:2px}
+.ov-checks li.ok{color:var(--green)}.ov-checks li.warn{color:var(--amber)}.ov-checks li.error{color:var(--red)}
+.ov-list{background:var(--s-1);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.ov-row{display:grid;grid-template-columns:120px 1fr auto;gap:var(--s4);align-items:center;padding:var(--s3) var(--s4);border-bottom:1px solid var(--line);transition:background .15s}
+.ov-row:last-child{border-bottom:0}
+.ov-row:hover{background:color-mix(in srgb,var(--s-2) 50%,transparent)}
+.ov-slot{display:grid;justify-items:center;gap:6px;color:var(--dim);padding:6px 0}
+.ov-slot>span:last-child{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;text-align:center}
+.ov-row.has .ov-slot{color:var(--red)}
+.ov-slot:hover{color:var(--text)}
+.ov-body{display:grid;gap:var(--s2);min-width:0}
+.ov-empty{height:44px;border:1.5px dashed var(--line);border-radius:var(--r);text-align:left;padding:0 16px;color:var(--dim);font-size:14px;transition:.15s}
+.ov-empty:hover{border-color:var(--red);color:var(--red)}
+.ov-pick{display:grid;grid-template-columns:60px 1fr auto auto;gap:var(--s3);align-items:center}
+.ov-pick .thumb{width:60px;height:60px}
+.ov-name{min-width:0;display:grid;gap:3px}
+.ov-name b{font-size:15px;font-weight:700;line-height:1.35}
+.ov-name>span{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.ov-name em{font-style:normal}
+.ov-price{display:grid;justify-items:end;gap:1px}
+.ov-price b{font-size:20px;font-weight:800;letter-spacing:-.01em}.ov-price s{font-size:11px;color:var(--dim)}
+.ov-add{height:40px;padding:0 16px;font-size:13px}
+.ov-more{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:var(--s3) var(--s4);border-radius:var(--r-lg);border:1px dashed var(--line)}
+.ov-more>span{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-right:4px}
+.ov-more button{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--s-1);font-size:13px;font-weight:600;color:var(--muted)}
+.ov-more button svg{width:15px;height:15px}
+.ov-more button:hover{border-color:var(--red);color:var(--red)}
+
+/* ===== PICKER (components / extras / peripherals) ===== */
+.pkr{display:grid;grid-template-columns:340px 1fr;gap:var(--s4);align-items:start}
+/* slot list + filter bar stick just under the tab bar; the slot list stops above the cart card */
+.pk-slots{display:grid;gap:var(--s2);position:sticky;top:calc((var(--hdr-h,126px) + var(--bar-h,54px)) / var(--z) + 12px);max-height:calc((100vh - var(--hdr-h,126px) - var(--bar-h,54px) - 96px) / var(--z));overflow:auto;scrollbar-width:thin;padding-right:4px}
+.pk-card{background:var(--s-1);border:1px solid var(--line);border-radius:var(--r-lg);transition:border-color .15s,box-shadow .15s}
+.pk-card.on{border-color:var(--red);box-shadow:0 0 0 1px var(--red),0 10px 24px rgba(227,18,27,.12)}
+.pk-head{display:flex;gap:var(--s3);align-items:center;width:100%;padding:var(--s3) var(--s4);text-align:left}
+.pk-head b{display:block;font-size:17px;font-weight:800}
+.pk-head small{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--dim)}
+.pk-card.has .pk-head small{color:var(--green)}
+/* chosen part on a slot card: photo on a white tile, slot title, name and price, (quantity), remove.
+   Any slot with a part gets that part's photo, large and faded, as the card background */
+.pk-card{position:relative;isolation:isolate;overflow:hidden}
+.pk-bg{position:absolute;top:0;right:0;bottom:0;width:62%;z-index:-1;background:no-repeat 70% 50%/cover;opacity:.16;-webkit-mask-image:linear-gradient(90deg,transparent,#000 70%);mask-image:linear-gradient(90deg,transparent,#000 70%);pointer-events:none;transition:opacity .2s}
+.pk-card.on .pk-bg,.pk-card:hover .pk-bg{opacity:.22}
+.pk-chosen{display:flex;align-items:center;gap:4px;padding-right:var(--s3)}
+.pk-chosen .pk-head{flex:1;min-width:0}
+.pk-chosen .pk-head>span:last-child{min-width:0;display:grid;gap:1px}
+.pk-thumb{width:64px;height:64px;flex:none;display:block;overflow:hidden;border-radius:8px;background:#fff;color:#18181b;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.pk-thumb .art.photo{padding:6%;filter:none}
+.pk-cname{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-chosen em{font-style:normal;font-size:14px;font-weight:800;color:var(--red)}
+.pk-chosen .rm{flex:none}
+.pk-chosen select{flex:none;height:30px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:13px;padding:0 4px}
+/* multi-pick slots: every extra part gets its own row in the same style */
+.pk-chosen.more{border-top:1px dashed var(--line)}
+.pk-chosen.more .pk-head{padding-block:10px}
+.pk-chosen.more .pk-thumb{width:48px;height:48px}
+.pk-chosen em i{font-style:normal;font-size:12px;font-weight:500;color:var(--dim)}
+.pk-n{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;margin-left:8px;border-radius:999px;background:var(--red);color:#fff;font-size:11px;font-weight:800;vertical-align:3px}
+.pk-main{min-width:0}
+/* phone-only pieces: the slot / Filter & sort bar, the category sheet's header and grip, search + sort in the drawer */
+.pk-mbar,.pk-sheet-h,.pk-sheet-grip,.pk-dr-m{display:none}
+.pk-top{display:flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s4);background:var(--s-1);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:var(--s3);position:sticky;top:calc((var(--hdr-h,126px) + var(--bar-h,54px)) / var(--z) + 12px);z-index:4}
+.pk-title{display:flex;align-items:center;gap:10px;margin-right:auto}
+.pk-title svg{width:26px;height:26px;color:var(--red)}
+.pk-title b{font-size:16px}
+.pk-title .n{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;background:var(--s-3);color:var(--muted)}
+.pk-q{position:relative;display:block}
+.pk-q input,.pk-top select{height:38px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:13px;outline:none}
+.pk-q input{width:200px;padding:0 34px 0 12px}
+.pk-q svg{position:absolute;right:10px;top:11px;width:16px;height:16px;color:var(--dim)}
+.pk-q input:focus,.pk-top select:focus{border-color:var(--red)}
+.pk-top select{padding:0 10px;cursor:pointer}
+.pk-fbtn{height:38px;padding:0 12px;font-size:13px;gap:6px}.pk-fbtn svg{width:16px;height:16px}
+.pk-fbtn.on{border-color:var(--red);color:var(--red)}
+.pk-fbtn span{min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center}
+/* list / grid switch next to the quick filter */
+.pk-view{display:flex;height:38px;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;flex:none}
+.pk-view button{width:38px;display:grid;place-items:center;color:var(--muted);background:var(--bg)}
+.pk-view button+button{border-left:1px solid var(--line)}
+.pk-view button:hover{color:var(--text)}
+.pk-view button.on{background:var(--red-soft);color:var(--red)}
+.pk-view svg{width:17px;height:17px}
+/* filter drawer (portalled to <body>, styled by .drawer in shop.css) */
+.pk-dr-body{flex:1;overflow:auto;padding:var(--s5);display:grid;align-content:start;gap:var(--s5)}
+.pk-dr-body fieldset{border:0;display:grid;gap:var(--s3)}
+.pk-dr-body legend{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s3)}
+.pk-drawer .chips{margin:0}
+.pk-drawer .chips small{margin-left:4px;font-size:11px;opacity:.6;font-weight:600}
+.pk-drawer .chips button{background:var(--s-2);color:var(--muted)}
+.pk-drawer .chips button.on{background:var(--red);color:#fff}
+.pk-compat{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:10px 14px;margin-bottom:var(--s3);border-radius:var(--r);background:var(--s-1);border:1px solid var(--line)}
+.pk-compat svg{width:18px;height:18px;color:var(--green)}
+.pk-compat button{margin-left:auto;font-weight:700;color:var(--red)}
+.pk-list{list-style:none;display:grid;gap:var(--s2)}
+.pk-row{display:grid;grid-template-columns:150px 1fr auto;gap:var(--s4);padding:var(--s4);border-radius:var(--r-lg);border:1px solid var(--line);background:var(--s-1);transition:border-color .15s,box-shadow .15s}
+/* hover only where there is a mouse: on phones a tapped card / button would otherwise stay half-lit */
+@media(hover:hover){.pk-row:hover{border-color:color-mix(in srgb,var(--red) 50%,var(--line))}}
+/* the chosen part: red frame, a soft red glow and tint, a "Selected" tag on the photo */
+.pk-row.on{border-color:var(--red);box-shadow:0 0 0 1px var(--red),0 12px 32px rgba(227,18,27,.2);background:linear-gradient(135deg,color-mix(in srgb,var(--red) 9%,var(--s-1)),var(--s-1) 55%)}
+.pk-img{position:relative}
+.pk-sel{position:absolute;left:6px;top:6px;z-index:1;display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px 0 6px;border-radius:999px;background:var(--red);color:#fff;font-size:11px;font-weight:800;box-shadow:0 4px 10px rgba(227,18,27,.35)}
+.pk-sel svg{width:12px;height:12px;stroke:#fff;stroke-width:3}
+.pk-row.bad .pk-img,.pk-row.bad h3{opacity:.55}
+.pk-img{aspect-ratio:1;border-radius:var(--r);background:var(--s-2);color:var(--text);display:block;overflow:hidden}
+.pk-info{min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.pk-info h3{font-size:16px;font-weight:700;line-height:1.35}
+.pk-tags{display:flex;flex-wrap:wrap;gap:6px}
+.pk-tags span{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--s-2);color:var(--muted)}
+.pk-tags span:first-child{color:var(--text)}
+.pk-why{display:flex;gap:6px;align-items:center;font-size:12px;font-weight:700;color:var(--red)}.pk-why svg{width:15px;height:15px}
+.pk-ship{margin-top:auto;display:flex;gap:12px;align-items:center;font-size:12px;color:var(--muted)}.pk-ship em{font-style:normal}
+.pk-buy{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:2px;min-width:140px}
+.pk-buy b{font-size:22px;font-weight:800;letter-spacing:-.01em}.pk-buy s{font-size:11px;color:var(--dim);margin-bottom:6px}
+/* grid view: the same rows as cards — photo on top, price and button at the bottom */
+.pk-list.grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:var(--s3)}
+.pk-list.grid .pk-row{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;gap:var(--s3);padding:var(--s3)}
+.pk-list.grid .pk-info h3{font-size:14px}
+.pk-list.grid .pk-tags span:nth-child(n+4){display:none}
+.pk-list.grid .pk-buy{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:flex-start;gap:2px 8px;min-width:0}
+.pk-list.grid .pk-buy .tt-save{flex-basis:100%}
+.pk-list.grid .pk-buy b{font-size:19px}.pk-list.grid .pk-buy s{margin:0}
+.pk-list.grid .pick{flex-basis:100%;justify-content:center;margin-top:6px}
+.pk-list.grid .empty{grid-column:1/-1}
+.pick{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:var(--r);border:1px solid var(--line);background:var(--s-1);font-weight:700;font-size:14px;transition:.15s}
+.pick i{width:18px;height:18px;border:1.5px solid var(--dim);border-radius:4px;display:grid;place-items:center;transition:.15s}
+.pick.single i{border-radius:50%}
+@media(hover:hover){.pick:hover:not(:disabled):not(.on){border-color:var(--red);color:var(--red)}}
+/* chosen: a solid red button with a white tick ("Selected" / "Added") */
+.pick.on{border-color:var(--red);background:var(--red);color:#fff;box-shadow:0 6px 16px rgba(227,18,27,.35)}
+.pick.on i{background:#fff;border-color:#fff}
+.pick.on i::after{content:"";width:8px;height:4px;border:2px solid var(--red);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+@media(hover:hover){.pick.on:hover{background:var(--red-600)}}
+.pick:disabled{opacity:.45;cursor:not-allowed}
+
+/* ===== CART CARD — a slim sticky row at the bottom-left, as wide as the slot column (total, status dot, cart).
+   Clicking the row opens the details above it: breakdown, savings, compatibility, assembly, Go to Cart ===== */
+.pcb-total{position:sticky;bottom:12px;z-index:40;width:340px;margin-top:var(--s4);border-radius:var(--r-lg);background:var(--s-1);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.35);overflow:hidden;transition:border-color .2s}
+.pcb-total.open{border-color:color-mix(in srgb,var(--red) 45%,var(--line))}
+.tt-bar{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 14px}
+.tt-toggle{flex:1;min-width:0;height:40px;display:flex;align-items:center;gap:8px;text-align:left}
+.tt-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+.tt-toggle b{font-size:20px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.tt-pct{font-style:normal;font-size:11px;font-weight:800;padding:1px 6px;border-radius:4px;background:var(--amber);color:#111}
+.tt-dot{width:8px;height:8px;flex:none;margin-left:auto;border-radius:50%;background:var(--dim)}
+.tt-dot.good{background:var(--green)}.tt-dot.warn{background:var(--amber)}.tt-dot.bad{background:var(--red)}
+.tt-chev{width:18px;height:18px;color:var(--muted);transition:transform .2s,color .2s}
+.tt-toggle:hover .tt-chev{color:var(--text)}
+.pcb-total.open .tt-chev{transform:rotate(180deg)}
+.tt-cart{position:relative;width:40px;height:40px;flex:none;border-radius:var(--r);background:var(--red);color:#fff;display:grid;place-items:center;transition:background .15s}
+.tt-cart:hover:not(:disabled){background:var(--red-600)}.tt-cart:disabled{opacity:.45;cursor:not-allowed}
+.tt-cart svg{width:18px;height:18px}
+.tt-cart span{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#fff;color:var(--red);font-size:10px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px var(--s-1)}
+.tt-more{display:grid;gap:12px;padding:14px;border-bottom:1px solid var(--line);animation:tt-open .2s ease-out}
+@keyframes tt-open{from{opacity:0;transform:translateY(8px)}}
+.tt-lines{display:grid;gap:6px;font-size:13px}
+.tt-lines>div{display:flex;justify-content:space-between;gap:8px;color:var(--muted)}
+.tt-lines b{color:var(--text);font-variant-numeric:tabular-nums}
+.tt-lines em{font-style:normal;font-weight:800}
+.tt-lines .sv b,.tt-lines .sv em{color:var(--amber)}
+.tt-lines s{color:var(--dim)}
+.tt-lines small{font-size:11px;color:var(--dim)}
+.tt-more .tt-go{width:100%;height:46px}
+.tt-status{display:grid;font-size:13px;font-weight:700;padding:8px 14px;border-radius:var(--r);background:var(--s-2);color:var(--muted)}
+.tt-status small{font-size:11px;font-weight:600;color:var(--dim)}
+.tt-status.good{background:rgba(34,197,94,.12);color:var(--green)}
+.tt-status.warn{background:var(--amber-soft);color:var(--amber)}
+.tt-status.bad{background:var(--red-soft);color:var(--red)}
+.switch{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+.switch .track{position:relative;width:44px;height:24px;border-radius:999px;background:var(--s-3);transition:.2s;flex:none}
+.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.switch input:checked+.track{background:var(--red)}
+.switch input:checked+.track::after{transform:translateX(20px)}
+.switch input:focus-visible+.track{outline:2px solid var(--red);outline-offset:2px}
+.switch em{font-style:normal;font-size:12px;color:var(--dim)}
+.tt-go{height:52px;padding:0 24px;font-size:15px}.tt-go:disabled{opacity:.45;cursor:not-allowed}
+.tt-go svg{width:18px;height:18px}
+.pcb-toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:300;padding:12px 18px;border-radius:var(--r);background:var(--text);color:var(--bg);font-size:14px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.35);animation:pop .25s ease}
+/* ===== LOADING SKELETON (Skeleton.tsx) — shimmering blocks in the builder's own layout, then the real page fades in ===== */
+.sk{display:block;flex:none;background:linear-gradient(90deg,var(--s-2) 25%,var(--s-3) 50%,var(--s-2) 75%);background-size:200% 100%;animation:sk-shine 1.2s ease-in-out infinite}
+@keyframes sk-shine{from{background-position:100% 0}to{background-position:-100% 0}}
+.sk-page{pointer-events:none}
+.sk-lines{flex:1;display:grid;gap:8px}
+.sk-tabs{display:flex;gap:6px;align-items:center}
+.sk-chips{display:flex;gap:6px}
+.pcb-in{animation:pcb-in .35s ease-out}
+@keyframes pcb-in{from{opacity:0;transform:translateY(6px)}}
+@media(prefers-reduced-motion:reduce){.sk,.pcb-in,.tt-more{animation:none}}
+
+@media(max-width:1200px){.pkr{grid-template-columns:280px 1fr}.pk-q input{width:150px}.pcb-total{width:280px}}
+@media(max-width:900px){
+ .pkr{grid-template-columns:1fr}
+ .pk-slots{position:static;max-height:none;display:flex;overflow-x:auto;padding-bottom:4px}
+ .pk-card{flex:0 0 240px}
+ .pk-top{position:static;flex-wrap:wrap}.pk-title{flex-basis:100%}.pk-q{flex:1}.pk-q input{width:100%}
+ .pcb-total{width:auto}
+}
+@media(max-width:680px){
+ /* phones: the power / share / reset row sits under the tabs; both scroll away (only the parts bar stays pinned) */
+ .pcb-bar .pcb-actions{display:none}.pcb-actions-m{display:flex;justify-content:space-between;margin:0 2px var(--s3)}
+ /* phones: the row sits on the circuit background — solid labelled chips, readable even when disabled */
+ .pcb-actions-m{gap:6px;flex-wrap:wrap}.pcb-actions-m .watt{flex-basis:100%;justify-content:center;margin:0}
+ .pcb-actions-m .ib{flex:1;justify-content:center}
+ .pcb-actions-m .ib{width:auto;height:34px;padding:0 10px;gap:6px;display:inline-flex;align-items:center;border-radius:999px;background:var(--s-1);border:1px solid var(--line);color:var(--text);font-size:12px;font-weight:700}
+ .pcb-actions-m .ib svg{width:15px;height:15px}.pcb-actions-m .ib-l{display:inline}
+ .pcb-actions-m .ib:disabled{opacity:.6;color:var(--muted)}
+ .pcb-tabs button{padding:0 12px;font-size:13px}
+ .pk-list.grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))}
+ /* overview on phones (as builder.wootware.co.za): the slot name as a heading, the product's own photo beside its
+    name, the stock line between dashed rules, then remove (left) and the price (right) — no slot picture */
+ .ov-row{grid-template-columns:1fr;gap:var(--s3);padding:var(--s4)}
+ .ov-slot{display:block;padding:0;justify-self:start;color:var(--muted)}.ov-row.has .ov-slot{color:var(--muted)}
+ .ov-slot .slot-art{display:none}
+ .ov-slot>span:last-child{font-size:16px;font-weight:600;letter-spacing:0;text-transform:none;text-align:left;text-decoration:underline 1px;text-decoration-color:var(--line);text-underline-offset:6px}
+ .ov-pick{grid-template-columns:76px 1fr;grid-template-areas:"img name" "stk stk" "rm price";gap:var(--s3) var(--s4);align-items:start}
+ .ov-pick .thumb{grid-area:img;width:76px;height:76px}
+ .ov-name{display:contents}
+ .ov-name b{grid-area:name;font-size:17px;font-weight:800;line-height:1.3;align-self:center}
+ .ov-name>span{grid-area:stk;padding:10px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);font-size:13px}
+ .ov-pick .rm{grid-area:rm;align-self:end;justify-self:start}
+ .ov-price{grid-area:price;justify-items:end;align-self:end}
+ .ov-price b{font-size:24px}
+ .ov-pick+.ov-pick{padding-top:var(--s3);border-top:1px solid var(--line)}
+ .ov-add{justify-self:end;height:36px}
+ /* a filled slot: Change / Add sits beside the bin, on the price's row, instead of a row of its own */
+ .ov-row.has{position:relative}
+ .ov-row.has .ov-add{position:absolute;left:calc(var(--s4) + 40px);bottom:var(--s4);height:34px;padding:0 14px}
+ .ov-pick{row-gap:var(--s2)}
+ .ov-pick .rm{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line);border-radius:var(--r)}
+ .ov-price{gap:0;min-height:34px}
+ .ov-checks ul{grid-template-columns:1fr}
+ .pk-row{grid-template-columns:84px 1fr;gap:var(--s3);padding:var(--s3)}
+ .pk-buy{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}.pk-buy s{margin:0}
+ .pcb-total{bottom:72px}
+ /* the toolbar folds into one bar: the slot (opens the category sheet) and Filter & sort; it sticks under the tabs */
+ .pk-top{display:none}
+ /* phones: this bar is the only thing pinned while the parts scroll — the site header and the tabs scroll away */
+ body:has(.pcb-bg) .site-hdr{position:relative}
+ .pcb-bar{position:static}
+ .pk-mbar{display:flex;gap:8px;padding:8px;margin-bottom:var(--s3);background:var(--s-1);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-lg) var(--r-lg);position:sticky;top:0;z-index:29;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+ .pk-mslot,.pk-mfilter{display:flex;align-items:center;gap:10px;height:48px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);min-width:0}
+ .pk-mslot>svg:first-child{width:26px;height:26px;flex:none;color:var(--muted);stroke-width:1.4}
+ .pk-mslot b{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .pk-mslot .n{font-size:12px;font-weight:800;padding:2px 8px;border-radius:6px;border:1px solid var(--line);background:var(--s-2);color:var(--muted)}
+ .pk-mslot .chev{width:16px;height:16px;flex:none;color:var(--muted)}
+ .pk-mfilter{margin-left:auto;flex:none;font-size:14px;font-weight:600;white-space:nowrap}
+ .pk-mfilter svg{width:18px;height:18px}
+ .pk-mfilter.on{border-color:var(--red);color:var(--red)}
+ .pk-mfilter span{min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center}
+ .pk-dr-m{display:grid}
+ span.pk-dr-m{display:inline}
+ .pk-drawer .pk-q input{width:100%;height:42px;padding:0 34px 0 12px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:14px;outline:none}
+ .pk-drawer .pk-q svg{position:absolute;right:10px;top:13px;width:16px;height:16px;color:var(--dim)}
+ /* the slot list becomes a full-screen sheet sliding up from the bottom: "Select a Category", the slot cards, a grip to close */
+ .pk-slots{position:fixed;inset:0;z-index:160;display:flex;flex-direction:column;gap:var(--s2);max-height:none;height:100dvh;overflow:auto;overscroll-behavior:contain;padding:0 var(--s4);background:var(--s-1);border-radius:0;box-shadow:none;transform:translateY(105%);visibility:hidden;transition:transform .28s ease,visibility 0s .28s}
+ .pk-slots.open{transform:none;visibility:visible;transition:transform .28s ease}
+ .pk-slots .pk-card{flex:none}
+ .pk-sheet-h{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;flex:none;padding:var(--s4) 0;background:var(--s-1);border-bottom:1px solid var(--line)}
+ .pk-sheet-h b{font-size:20px;font-weight:600}
+ .pk-sheet-h .ib{background:var(--s-3);border-radius:8px}
+ .pk-sheet-grip{display:grid;place-items:center;flex:none;position:sticky;bottom:0;height:28px;margin-top:auto;background:var(--s-1)}
+ .pk-sheet-grip::before{content:"";width:40px;height:4px;border-radius:2px;background:var(--dim)}
+ /* list rows: photo on a white tile with the name beside it; specs, stock and price underneath */
+ .pk-list.list .pk-row{grid-template-columns:112px 1fr;gap:10px 14px;padding:12px}
+ .pk-list.list .pk-info{display:contents}
+ .pk-list.list .pk-img{background:#fff;color:#18181b}
+ .pk-list.list .pk-img .art.photo{padding:6%;filter:none}
+ .pk-list.list .pk-info h3{align-self:center;font-size:17px;font-weight:700;line-height:1.3}
+ .pk-list.list .pk-tags,.pk-list.list .pk-why,.pk-list.list .pk-ship{grid-column:1/-1}
+ .pk-list.list .pk-ship{margin-top:0}
+ /* loading cards: title bars beside the photo, chips and stock line underneath */
+ .pk-list.list .sk-row .pk-info>:first-child{align-self:center;display:grid;gap:8px}
+ .pk-list.list .sk-row .pk-info>:not(:first-child){grid-column:1/-1}
+ .pk-list.list .pk-img.sk{background:linear-gradient(90deg,var(--s-2) 25%,var(--s-3) 50%,var(--s-2) 75%);background-size:200% 100%}
+ /* phones: the stack starts above the full-width cart card (72px up, 58px tall, 12px gap) */
+ body:has(.pcb-bg){--float-b:calc(72px + 58px + 12px)}
+ /* phones stay flexible: the support button takes the lowest spot unless the compare button is showing */
+ body:has(.pcb-bg) .fab{bottom:var(--float-b)}
+ body:has(.pcb-bg):has(.cmp-mini) .fab{bottom:calc(var(--float-b) + 52px + 12px)}
+}
+
+/* ===== DESKTOP DENSITY — the builder renders at 75%, like browser zoom 75% =====
+   Its outer width and padding are divided by the zoom so it still lines up with the header,
+   and the sticky offsets / heights are divided too so they still land just under the header. */
+@media(min-width:1100px){
+ .pcb-page{--z:.75;zoom:var(--z);max-width:calc(var(--max) / var(--z));padding-inline:calc(var(--gut) / var(--z))}
+}
+
+/* ===== PC build quotation (/pc-builder/print) — a white sheet on screen, the only thing that prints ===== */
+.quote-page{padding-block:var(--s6)}
+.quote-bar{display:flex;justify-content:space-between;gap:var(--s3);margin:0 auto var(--s4);max-width:900px}
+.quote-bar .btn{height:42px;padding:0 18px;display:inline-flex;align-items:center;gap:8px}
+.quote-bar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.quote{max-width:900px;margin:0 auto;background:#fff;color:#18181b;border-radius:var(--r-lg);padding:40px 44px;box-shadow:0 20px 50px rgba(0,0,0,.25);font-size:13px;line-height:1.45}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:24px;padding-bottom:18px;border-bottom:3px solid #E3121B}
+.q-logo{width:190px;height:auto}
+.q-shop{display:grid;gap:2px;text-align:right;color:#52525b;font-size:12px;max-width:430px;text-wrap:balance}.q-shop i{font-style:normal;white-space:nowrap}
+.q-shop b{color:#18181b;font-size:14px}
+.q-title{display:flex;justify-content:space-between;align-items:center;gap:24px;margin:22px 0 10px}
+.q-title h1{font-size:24px;font-weight:800;letter-spacing:-.01em;color:#18181b}
+.q-title dl{display:grid;grid-template-columns:auto auto;gap:2px 14px;font-size:12px}
+.q-title dl div{display:contents}
+.q-title dt{color:#71717a}.q-title dd{font-weight:700;text-align:right}
+.q-for{margin:6px 0 18px;color:#52525b;display:flex;gap:8px;align-items:flex-end}
+.q-for span{flex:1;max-width:320px;border-bottom:1px dotted #a1a1aa;height:18px}
+.q-empty{padding:40px 0;text-align:center;color:#52525b}.q-empty a{color:#E3121B;font-weight:600}
+.q-table{width:100%;border-collapse:collapse}
+.q-table th{background:#18181b;color:#fff;font-size:11px;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:9px 10px}
+.q-table td{padding:9px 10px;border-bottom:1px solid #e4e4e7;vertical-align:top}
+.q-table tbody tr:nth-child(even) td{background:#fafafa}
+.q-table td b{display:block;font-weight:600}
+.q-table td small{display:block;color:#71717a;font-size:11px;margin-top:2px}
+.q-table .n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.q-table td small.q-comp-m{display:none}
+.q-total{display:flex;justify-content:flex-end;align-items:baseline;gap:24px;margin:0;padding:10px 10px 0;border-top:2px solid #18181b;font-size:16px;font-weight:800;color:#18181b}.q-total b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.q-power{margin-top:14px;font-size:12px;color:#52525b}
+.q-end{margin-top:56px}
+.q-sign{display:flex;justify-content:space-between;gap:40px}
+.q-sign div{flex:0 1 220px;display:grid;gap:6px;text-align:center;font-size:12px;font-weight:600;color:#52525b}
+.q-sign span{display:block;height:44px;border-bottom:1px solid #18181b}
+.q-foot{margin-top:26px;padding-top:14px;border-top:1px solid #e4e4e7;display:grid;gap:4px;font-size:11px;color:#71717a;text-align:center}
+.q-foot a{color:#E3121B}
+/* phones (on screen only — a printed quotation stays the A4 table): every part becomes a stacked row —
+   its component and name across, then "Qty 1 × ৳3,300" on the left and the line total on the right */
+@media screen and (max-width:680px){
+ .quote-page{padding-block:var(--s4)}
+ .quote-bar .btn{flex:1;justify-content:center;padding:0 12px;font-size:14px}.q-long{display:none}
+ .quote{padding:20px 14px;border-radius:var(--r)}
+ .q-head{flex-direction:column;align-items:flex-start;gap:12px;padding-bottom:14px}.q-logo{width:150px}.q-shop{text-align:left;font-size:11.5px}
+ .q-title{flex-direction:column;align-items:stretch;gap:10px;margin:16px 0 8px}.q-title h1{font-size:21px}
+ .q-title dl{grid-template-columns:auto 1fr}.q-title dd{text-align:left}
+ .q-for span{max-width:none}
+ .q-table,.q-table tbody{display:block}.q-table thead{display:none}
+ .q-table tr{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:4px 8px;padding:10px 8px;border-bottom:1px solid #e4e4e7}
+ .q-table tbody tr:nth-child(even){background:#fafafa}
+ .q-table td{display:block;padding:0;border:0}.q-table tbody tr:nth-child(even) td{background:none}
+ .q-table td.q-sl,.q-table td.q-comp{display:none}
+ .q-table .q-prod{grid-column:1/-1}.q-table td b{font-size:13.5px;line-height:1.35}
+ .q-table td small.q-comp-m{display:block;margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+ .q-table .q-qty{color:#71717a;font-size:12px}.q-table .q-qty::before{content:"Qty "}
+ .q-table .q-unit{text-align:left;color:#71717a;font-size:12px}.q-table .q-unit::before{content:"× "}
+ .q-table .q-sum{font-weight:700}
+ .q-total{padding:12px 8px 0;font-size:17px;justify-content:space-between}
+ .q-power{font-size:12px;line-height:1.5}
+ .q-foot a{word-break:break-all}
+ .q-end{margin-top:40px}.q-sign{gap:20px}.q-sign div{flex:1;font-size:11px}
+}
+@media print{
+ /* no page margin = no room for the browser's own header / footer (date, title, URL, page no.): the sheet keeps
+    its 12mm margin as padding instead, repeated on every page of a long quotation */
+ @page{size:A4;margin:0}
+ body *{visibility:hidden}
+ .quote,.quote *{visibility:visible}
+ .quote{position:absolute;inset:0 auto auto 0;width:100%;max-width:none;margin:0;padding:12mm;box-sizing:border-box;box-decoration-break:clone;-webkit-box-decoration-break:clone;box-shadow:none;border-radius:0}
+ .no-print{display:none !important}
+ .q-table th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .q-table tr{break-inside:avoid}
+ /* compact on paper: an ordinary build fits one A4 page */
+ .quote{font-size:11.5px}.q-logo{width:150px}.q-head{padding-bottom:12px}
+ .q-title{margin:14px 0 6px}.q-title h1{font-size:20px}.q-for{margin:4px 0 12px}
+ .q-table th{padding:6px 8px}.q-table td{padding:5px 8px}.q-table td small{margin-top:0}
+ .q-total{font-size:14px;padding-top:7px}
+ .q-power{margin-top:8px}.q-foot{margin-top:14px;padding-top:8px}
+ /* the sheet fills the A4 page (297mm, its 12mm margins inside), so the signatures and terms sit at its foot */
+ .quote{display:flex;flex-direction:column;min-height:296mm}
+ .q-end{margin-top:auto;padding-top:28px;break-inside:avoid}.q-sign span{height:40px}
+}

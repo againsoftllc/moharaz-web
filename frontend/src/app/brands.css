@@ -1,0 +1,72 @@
+/* ===== BRAND LOGO TILE ===== */
+.blogo{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:10px;font-weight:800;font-size:11px;letter-spacing:.02em;line-height:1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.blogo.lg{width:64px;height:64px;border-radius:12px;font-size:15px}
+.blogo.xl{width:110px;height:110px;border-radius:16px;font-size:24px;box-shadow:0 20px 40px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.1)}
+
+/* a real logo sits on a white tile so dark and coloured marks read in both themes */
+.blogo.img{background:#fff;padding:5px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.blogo.img img{width:100%;height:100%;object-fit:contain;display:block}
+.blogo.lg.img{padding:8px}.blogo.xl.img{padding:14px}
+
+/* homepage "Brands We Supply" carousel: two rows drifting in opposite directions */
+.bm{display:grid;gap:var(--s3);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.bm-row{display:flex;overflow:hidden;padding-block:4px}
+.bm-track{list-style:none;flex:none;display:flex;gap:var(--s3);padding-right:var(--s3);animation:bm-scroll 70s linear infinite}
+.bm-row.rev .bm-track{animation-direction:reverse}
+.bm:hover .bm-track,.bm:focus-within .bm-track{animation-play-state:paused}
+@keyframes bm-scroll{to{transform:translateX(-100%)}}
+.bm-item{display:grid;grid-template-rows:64px auto;width:184px;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--s-1);overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s}
+.bm-item:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.bm-logo{display:grid;place-items:center;padding:12px 22px;background:#fff;border-bottom:1px solid var(--line)}
+.bm-logo img{max-width:100%;max-height:38px;width:auto;height:auto;object-fit:contain;transition:transform .25s}
+.bm-item:hover .bm-logo img{transform:scale(1.06)}
+.bm-meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:9px 12px}
+.bm-meta b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bm-meta em{font-style:normal;font-size:11px;font-weight:600;color:var(--dim);white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.bm-track{animation:none}.bm-row{overflow-x:auto}.bm-track[aria-hidden]{display:none}}
+
+/* brand page heading */
+.brand-title{display:flex;align-items:center;gap:var(--s4)}
+
+/* sidebar category list as buttons (brand page) */
+.cat-list button{display:flex;justify-content:space-between;width:calc(100% + 16px);padding:6px 8px;margin:0 -8px;border-radius:var(--r-sm);font-size:14px;color:var(--muted);text-align:left}
+.cat-list button span{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.cat-list button:hover{color:var(--text);background:var(--s-2)}
+.cat-list button.on{color:var(--red);background:var(--red-soft);font-weight:700}.cat-list button.on span{color:var(--red)}
+.cat-list .all-brands{margin-top:var(--s2);padding-top:var(--s2);border-top:1px solid var(--line)}
+.cat-list .all-brands a{font-weight:700;color:var(--red)}
+
+/* ===== /brands directory ===== */
+.br-tools{display:grid;gap:var(--s3);margin-bottom:var(--s4)}
+.br-search{display:flex;align-items:center;gap:10px;height:50px;padding:0 16px;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--s-1);max-width:520px}
+.br-search:focus-within{border-color:var(--red);box-shadow:0 0 0 3px var(--red-soft)}
+.br-search svg{color:var(--dim)}
+.br-search input{flex:1;min-width:0;height:100%;background:none;border:0;outline:none;color:var(--text);font:inherit;font-size:15px}
+.br-search button{color:var(--dim);font-size:14px}.br-search button:hover{color:var(--red)}
+.br-tools .seg{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;padding-bottom:2px}
+.br-tools .seg button{white-space:nowrap;border-color:var(--line);background:var(--s-1)}
+.br-tools .seg button.on{border-color:var(--red);background:var(--red);color:#fff}
+.az{position:sticky;top:124px;z-index:5;display:flex;flex-wrap:wrap;gap:4px;padding:10px;margin-bottom:var(--s5);border-radius:var(--r-lg);border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px)}
+.az a,.az span{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:13px;font-weight:800}
+.az a{color:var(--text)}.az a:hover{background:var(--red);color:#fff}
+.az span{color:var(--dim);opacity:.4}
+.br-group{scroll-margin-top:190px;margin-bottom:var(--s6)}
+.br-group h2{display:flex;align-items:center;gap:var(--s3);font-size:28px;font-weight:800;color:var(--red);margin-bottom:var(--s3)}
+.br-group h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.br-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3)}
+.br-card{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4) var(--s3) var(--s3);border-radius:var(--r-lg);border:1px solid var(--line);background:var(--s-1);transition:.2s}
+.br-card:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.25)}
+.br-card>div{flex:1;min-width:0;display:grid}
+.br-card b{font-size:15px}
+.br-card span{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.br-card em{font-style:normal;font-size:12px;font-weight:800;min-width:30px;height:26px;padding:0 8px;border-radius:999px;display:grid;place-items:center;background:var(--s-2);color:var(--muted)}
+.br-card:hover em{background:var(--red);color:#fff}
+
+@media(max-width:1200px){.br-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.br-grid{grid-template-columns:repeat(2,1fr)}.az{position:static}}
+@media(max-width:680px){
+ .br-grid{grid-template-columns:1fr}
+ .az a,.az span{width:28px;height:28px}
+ .bm-item{width:150px;grid-template-rows:54px auto}.bm-logo{padding:10px 16px}.bm-logo img{max-height:32px}.bm-track{animation-duration:55s}
+ .brand-title .blogo{width:48px;height:48px;font-size:12px}
+}
