@@ -9,7 +9,7 @@ import CategoryView from "@/components/shop/CategoryView";
 import { isFiltered, listQuery, readQuery, type Query, type ShopCategory } from "@/lib/shop/listing";
 import PriceList from "@/components/shop/PriceList";
 import { findRedirect, getFacets, getProduct, listProducts, resolveSlug, type Resolved } from "@/lib/shop/api";
-import { callForPrice } from "@/lib/products";
+import { callForPrice, type Product } from "@/lib/products";
 
 /* one top-level address space, like the live site: /all, /{category}, /{product}, /{brand}.
    Everything comes from the AgainERP API; pages are rendered on request and cached for a minute. */
@@ -124,10 +124,14 @@ async function Listing({ slug, query, cat }: { slug: string; query: Query; cat?:
   const lq = listQuery(slug, query);
   const [res, facets] = await Promise.all([listProducts(lq), getFacets(lq).catch(() => null)]);
   const unfiltered = !isFiltered(query);
-  // the price list: the category's 10 newest products on offer (compare-at price), only on the plain listing
-  const priceItems = cat && unfiltered
-    ? (await listProducts({ category: slug, onSale: true, perPage: 20 }).catch(() => ({ items: [] }))).items.filter((p) => !callForPrice(p)).slice(0, 10)
-    : [];
+  // the price list: the category's 10 newest products on offer (compare-at price), only on the plain listing;
+  // a shop with few offers (Moharaz) lists the category's first products instead
+  const priceable = (items: Product[]) => items.filter((p) => !callForPrice(p)).slice(0, 10);
+  let priceItems: Product[] = [];
+  if (cat && unfiltered) {
+    priceItems = priceable((await listProducts({ category: slug, onSale: true, perPage: 20 }).catch(() => ({ items: [] as Product[] }))).items);
+    if (!priceItems.length) priceItems = priceable(res.items);
+  }
 
   const name = cat?.name ?? "All Products";
   const category: ShopCategory | undefined = cat && { slug: cat.slug, name: cat.name, intro: cat.meta_description };
