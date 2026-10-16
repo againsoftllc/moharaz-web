@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SHOW_PC_BUILDER } from "@/lib/features";
+import { useWishlist } from "./wishlist/WishlistProvider";
 
 /** Mobile bottom bar. PC Builder is the raised icon in the middle (hidden while SHOW_PC_BUILDER is off — Home takes its place). */
 export default function BottomNav() {
   const path = usePathname();
   const on = (prefix: string) => (path.startsWith(prefix) ? "on" : undefined);
+  const { ids: saved, ready } = useWishlist();
+  const cols = SHOW_PC_BUILDER ? 6 : 5; // Wishlist makes one more than the five slots the bar was drawn for
 
   return (
-    <nav className="bnav" aria-label="Mobile">
+    <nav className="bnav" aria-label="Mobile" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
       {!SHOW_PC_BUILDER && (
         <Link href="/" className={path === "/" ? "on" : undefined}>
           <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8" /><path d="M5 10v10h14V10" /></svg>Home
@@ -31,6 +34,13 @@ export default function BottomNav() {
       )}
       <Link href="/#deals">
         <svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg>Deal Zone
+      </Link>
+      <Link href="/account?tab=wishlist" aria-label={`Wishlist, ${saved.length} saved`} style={{ position: "relative" }}>
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z" /></svg>
+        Wishlist
+        {ready && saved.length > 0 && (
+          <em style={{ position: "absolute", top: -2, left: "calc(50% + 6px)", minWidth: 16, height: 16, padding: "0 4px", borderRadius: 8, background: "var(--red)", color: "#fff", fontSize: 10, fontStyle: "normal", lineHeight: "16px", textAlign: "center" }}>{saved.length}</em>
+        )}
       </Link>
       <Link href="/login" className={on("/login") ?? on("/register")}>
         <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>Account
