@@ -7,15 +7,16 @@ import { useAuth } from "./auth/AuthProvider";
 import UserAvatar from "./auth/UserAvatar";
 import { useCart } from "./cart/CartProvider";
 import { useCompare } from "./compare/CompareProvider";
+import { SHOW_PC_BUILDER } from "@/lib/features";
 
-const QUICK: [string, string, string][] = [
+const QUICK: [string, string, string][] = ([
   ["/pc-builder", "PC Builder", '<rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>'],
   ["/#deals", "Deal Zone", '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>'],
   ["/bundles/create", "Make a Bundle", '<path d="M12 5v14M5 12h14"/><rect x="3" y="3" width="18" height="18" rx="3"/>'],
   ["/bundles", "Bundles", '<rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18"/>'],
   ["/brand", "Brands", '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/>'],
   ["/blog", "Blog", '<path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/>'],
-];
+] as [string, string, string][]).filter(([href]) => SHOW_PC_BUILDER || href !== "/pc-builder");
 
 /** `items`: the menu the header shows (the AgainERP admin's, or the built-in one) */
 export default function MobileMenu({ open, onClose, onTheme, items }: { open: boolean; onClose: () => void; onTheme: () => void; items?: MenuItem[] }) {

@@ -10,6 +10,7 @@ import { OPEN_MENU_EVENT } from "@/lib/nav";
 import AccountMenu from "./auth/AccountMenu";
 import { useCart } from "./cart/CartProvider";
 import { useCompare } from "./compare/CompareProvider";
+import { SHOW_PC_BUILDER } from "@/lib/features";
 import { Cart } from "./Icon";
 import MobileMenu from "./MobileMenu";
 import SearchBox, { openSearch } from "./SearchBox";
@@ -261,7 +262,7 @@ export default function Header({ menu: adminMenu }: { menu?: MenuItem[] | null }
         </div>
         <div className="actions">
           <Link className="act deal" href="/#deals"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg><span><small>Ends in <b id="dz" suppressHydrationWarning>{dz}</b></small><strong>Deal Zone</strong></span></Link>
-          <Link href="/pc-builder" className="act pcb"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" /></svg><span><small>Build your own</small><strong>PC Builder</strong></span></Link>
+          {SHOW_PC_BUILDER && <Link href="/pc-builder" className="act pcb"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" /></svg><span><small>Build your own</small><strong>PC Builder</strong></span></Link>}
         </div>
       </div></div>
       <nav className="cat" aria-label="Categories"><div className="wrap"><ul className="menu" id="menu">

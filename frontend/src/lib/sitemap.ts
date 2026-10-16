@@ -1,5 +1,6 @@
 import { blogCategories, blogPosts, getBrands, getBundles, getCategories, listProducts, sitemapProductImages, type ApiCategory } from "./shop/api";
 import { SITE_URL } from "./site";
+import { SHOW_PC_BUILDER } from "./features";
 
 /* XML sitemaps: /sitemap.xml is an index pointing at one file per kind under /sitemaps/.
    Products, categories and brands are the real catalogue (AgainERP API), at their flat /{slug} URLs.
@@ -88,7 +89,7 @@ export const SITEMAPS: Record<string, () => Promise<Entry[]>> = {
   information: async () =>
     [
       ["/", 1, "daily"], ["/about-us", 0.5], ["/contact-us", 0.5],
-      ["/pc-builder", 0.7, "weekly"], ["/bundles", 0.7, "weekly"], ["/warranty", 0.3], ["/shipping", 0.3],
+      ...(SHOW_PC_BUILDER ? ([["/pc-builder", 0.7, "weekly"]] as const) : []), ["/bundles", 0.7, "weekly"], ["/warranty", 0.3], ["/shipping", 0.3],
       ["/refund", 0.3], ["/privacy-policy", 0.2], ["/terms-conditions", 0.2],
     ].map(([path, priority, freq]) => ({ path: path as string, priority: priority as number, freq: (freq ?? "monthly") as Entry["freq"] })),
   blog: async () => {

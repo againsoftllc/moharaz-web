@@ -4,7 +4,7 @@ import { StoreStatus, ToTop } from "./FooterExtras";
 import { WhatsApp } from "./Icon";
 import BottomNav from "./BottomNav";
 import ContactFab from "./ContactFab";
-import { SHOW_CONTACT_FAB } from "@/lib/features";
+import { SHOW_CONTACT_FAB, SHOW_PC_BUILDER } from "@/lib/features";
 import { FACEBOOK_URL, WHATSAPP_URL, YOUTUBE_URL } from "@/lib/socials";
 import { BRANCHES, PHONES, directionsUrl, tel } from "@/lib/stores";
 import PaymentLogos from "./PaymentLogos";
@@ -77,7 +77,7 @@ export default function Footer() {
           <div className="f-main">
             <nav aria-label="Customer service"><h5>CUSTOMER SERVICE</h5><Link href="/account?tab=orders" className="l">Track Order</Link><Link href="/shipping" className="l">Shipping &amp; Delivery</Link><Link href="/warranty" className="l">Warranty &amp; RMA</Link><Link href="/refund" className="l">Refund &amp; Returns</Link></nav>
             <nav aria-label="Company"><h5>COMPANY</h5><Link href="/about-us" className="l">About Moharaz</Link><Link href="/contact-us" className="l">Contact Us</Link><Link href="/blog" className="l">Blog</Link></nav>
-            <nav aria-label="Important links" className="f-links"><h5>IMPORTANT LINKS</h5><Link href="/pc-builder" className="l">PC Builder</Link><Link href="/brand" className="l">Brands</Link><Link href="/#deals" className="l">Deal Zone</Link><Link href="/bundles" className="l">Bundle Deals</Link><Link href="/compare" className="l">Compare Products</Link></nav>
+            <nav aria-label="Important links" className="f-links"><h5>IMPORTANT LINKS</h5>{SHOW_PC_BUILDER && <Link href="/pc-builder" className="l">PC Builder</Link>}<Link href="/brand" className="l">Brands</Link><Link href="/#deals" className="l">Deal Zone</Link><Link href="/bundles" className="l">Bundle Deals</Link><Link href="/compare" className="l">Compare Products</Link></nav>
             <div className="f-follow">
               <h5>FOLLOW US</h5>
               <div className="soc">

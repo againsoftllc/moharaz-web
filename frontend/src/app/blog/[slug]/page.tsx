@@ -3,6 +3,7 @@ import { seo } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbLd, postLd } from "@/lib/schema";
 import Link from "next/link";
+import { SHOW_PC_BUILDER } from "@/lib/features";
 import { notFound } from "next/navigation";
 import BlogList, { PostCard } from "@/components/blog/BlogList";
 import PostCover from "@/components/blog/PostCover";
@@ -110,7 +111,7 @@ export default async function BlogSlugPage({ params }: PageProps<"/blog/[slug]">
             )}
             <div className="tc-help">
               <b>Need advice?</b>
-              <p>Talk to our team at <a href="tel:+8801805042474">01805042474</a> or plan it yourself in our <Link href="/pc-builder">PC Builder</Link>.</p>
+              <p>Talk to our team at <a href="tel:+8801805042474">01805042474</a> {SHOW_PC_BUILDER ? <> or plan it yourself in our <Link href="/pc-builder">PC Builder</Link></> : null}.</p>
             </div>
           </aside>
           {/* the article as written in AgainERP (Website → Blog) */}

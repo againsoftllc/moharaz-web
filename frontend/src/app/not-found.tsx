@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SHOW_PC_BUILDER } from "@/lib/features";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -50,7 +51,7 @@ export default function NotFound() {
             <svg viewBox="0 0 24 24" aria-hidden><path d="M3 11 12 4l9 7" /><path d="M5 10v10h5v-6h4v6h5V10" /></svg>
             Go to Home
           </Link>
-          <Link href="/pc-builder" className="btn btn-line">Build a PC</Link>
+          {SHOW_PC_BUILDER && <Link href="/pc-builder" className="btn btn-line">Build a PC</Link>}
         </div>
 
         <div className="nf-cats">
