@@ -1,3 +1,4 @@
+import { SITE_HOST } from "./site";
 /* Product descriptions were imported from the previous shop, which had copied many of them from other sites —
    with those sites' styling: inline styles, classes, editor ids, fixed widths, <font>/<span> wrappers, even
    <meta>/<title>/<style> blocks. This keeps the content exactly as written and drops only that styling, so every
@@ -29,7 +30,10 @@ const attrOf = (raw: string, name: string) => {
 };
 const esc = (v: string) => v.replace(/"/g, "&quot;");
 /** the shop's own absolute address (any scheme, with or without www / an old "new." subdomain) */
-const OWN_SITE = /^\s*(?:https?:)?\/\/(?:www\.|new\.)?moharaz\.com(?=[/?#]|$)/i;
+const hostRe = (h: string) => h.replace(/^www\./, "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+/** the deployment's own host, plus any other host the shop's content may link to (NEXT_PUBLIC_OWN_HOSTS, comma-separated) */
+const OWN_HOSTS = [SITE_HOST, ...(process.env.NEXT_PUBLIC_OWN_HOSTS || "").split(",")].map((h) => h.trim()).filter(Boolean).map(hostRe);
+const OWN_SITE = new RegExp(`^\\s*(?:https?:)?//(?:www\\.|new\\.)?(?:${OWN_HOSTS.join("|")})(?=[/?#]|$)`, "i");
 
 export function cleanHtml(html: string): string {
   let s = html
@@ -55,7 +59,7 @@ export function cleanHtml(html: string): string {
     });
     if (tag === "a") {
       const href = attrOf(rest, "href") ?? "";
-      if (/^https?:\/\//i.test(href) && !/moharaz\.com/i.test(href)) keep.push('target="_blank"', 'rel="noopener"');
+      if (/^https?:\/\//i.test(href) && !OWN_SITE.test(href)) keep.push('target="_blank"', 'rel="noopener"');
     }
     if (tag === "img") keep.push('loading="lazy"');
     const open = `<${tag}${keep.length ? " " + keep.join(" ") : ""}${VOID.has(tag) ? " /" : ""}>`;
