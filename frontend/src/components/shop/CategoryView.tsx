@@ -23,10 +23,11 @@ function priceBounds(f: Facets | null) {
   return { lo, hi: Math.max(lo + step, Math.ceil(hi0 / step) * step), step };
 }
 
-function Check({ label, count, on, toggle }: { label: string; count?: number; on: boolean; toggle: () => void }) {
+function Check({ label, count, on, toggle, radio }: { label: string; count?: number; on: boolean; toggle: () => void; radio?: boolean }) {
   return (
-    <label className={`chk ${count === 0 ? "zero" : ""}`}>
-      <input type="checkbox" checked={on} onChange={toggle} />
+    <label className={`chk ${radio ? "rad" : ""} ${count === 0 ? "zero" : ""}`}>
+      {/* a radio never un-checks itself: clicking the selected one clears it (onClick), picking another switches */}
+      <input type={radio ? "radio" : "checkbox"} checked={on} onChange={radio ? () => {} : toggle} onClick={radio ? toggle : undefined} />
       <span className="box" /><span className="lbl">{label}</span>{count != null && <span className="n">{count.toLocaleString("en-US")}</span>}
     </label>
   );
@@ -126,10 +127,11 @@ export default function CategoryView({ slug, query, category, brand, initial, ch
   const shown = data.items;
 
   const toggle = (arr: string[], set: (v: string[]) => void, v: string) => { set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]); setPage(1); };
-  const toggleAttr = (code: string, v: string) => {
+  const toggleAttr = (code: string, v: string, single?: boolean) => {
     setAttrs((a) => {
       const vs = a[code] ?? [];
-      const next = vs.includes(v) ? vs.filter((x) => x !== v) : [...vs, v];
+      // single-select (radio) keeps at most one value; multi-select (checkboxes) keeps several
+      const next = vs.includes(v) ? vs.filter((x) => x !== v) : single ? [v] : [...vs, v];
       const rest = { ...a };
       delete rest[code];
       return next.length ? { ...rest, [code]: next } : rest;
@@ -210,7 +212,7 @@ export default function CategoryView({ slug, query, category, brand, initial, ch
               <fieldset key={a.code} className="grp"><legend>{a.name}</legend>
                 <div className={a.options.length > 8 ? "brand-scroll" : undefined}>
                   {a.options.map((o) => (
-                    <Check key={o.value} label={o.label} count={o.count} on={!!attrs[a.code]?.includes(valueSlug(o.value))} toggle={() => toggleAttr(a.code, valueSlug(o.value))} />
+                    <Check key={o.value} label={o.label} count={o.count} radio={a.display_type === "single_select"} on={!!attrs[a.code]?.includes(valueSlug(o.value))} toggle={() => toggleAttr(a.code, valueSlug(o.value), a.display_type === "single_select")} />
                   ))}
                 </div>
               </fieldset>

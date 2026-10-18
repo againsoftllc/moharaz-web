@@ -32,6 +32,10 @@
 .chk .lbl{flex:1}.chk .n{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
 .chk:hover{color:var(--text)}.chk:hover .box{border-color:var(--red)}
 .chk.zero{opacity:.45}
+/* single-select filter: radio buttons (one value at a time) */
+.chk.rad .box{border-radius:50%}
+.chk.rad input:checked+.box{background:transparent;border-color:var(--red)}
+.chk.rad input:checked+.box::after{width:8px;height:8px;border:0;border-radius:50%;background:var(--red);transform:none}
 .range{display:flex;gap:8px;align-items:center;clear:both;padding-top:4px}
 .range input,.inline input,.inline select,.toolbar select{height:38px;min-width:0;width:100%;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm);padding:0 10px;color:var(--text);font:inherit;font-size:14px;outline:none}
 .range input:focus,.inline input:focus,.inline select:focus,.toolbar select:focus{border-color:var(--red)}
